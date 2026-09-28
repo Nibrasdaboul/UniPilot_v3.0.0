@@ -1,0 +1,13 @@
+import pg from 'pg';
+const c = new pg.Client({ connectionString: 'postgresql://unipilot_user:UniPilot123@localhost:5432/unipilot' });
+await c.connect();
+const u = await c.query("SELECT id, role, person_code FROM users WHERE person_code IN ('0260000005','0260000006')");
+console.log('users', u.rows);
+const ids = u.rows.map((r) => r.id);
+const s = await c.query('SELECT offering_id, user_id, staff_role FROM course_staff WHERE user_id = ANY($1)', [ids]);
+console.log('course_staff', s.rows);
+const sec = await c.query('SELECT id, offering_id, kind, code, staff_user_id FROM sections WHERE staff_user_id = ANY($1)', [ids]);
+console.log('sections', sec.rows);
+const cs = await c.query(`SELECT DISTINCT staff_user_id, offering_id FROM class_sessions WHERE staff_user_id = ANY($1)`, [ids]);
+console.log('class_sessions staff', cs.rows);
+await c.end();
