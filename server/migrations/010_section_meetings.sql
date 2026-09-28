@@ -1,0 +1,1 @@
+-- section_meetings already exists: section_id, day_of_week, start_time, end_time, room_number, building.

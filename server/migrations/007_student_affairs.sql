@@ -1,0 +1,47 @@
+CREATE TABLE IF NOT EXISTS student_complaints (
+  id SERIAL PRIMARY KEY,
+  college_id INTEGER NOT NULL,
+  student_user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  body TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'open',
+  staff_note TEXT,
+  handled_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS student_activities (
+  id SERIAL PRIMARY KEY,
+  college_id INTEGER NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  location TEXT,
+  starts_at TIMESTAMPTZ NOT NULL,
+  ends_at TIMESTAMPTZ,
+  capacity INTEGER NOT NULL DEFAULT 40,
+  created_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS student_activity_signups (
+  id SERIAL PRIMARY KEY,
+  activity_id INTEGER NOT NULL REFERENCES student_activities(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (activity_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS student_cases (
+  id SERIAL PRIMARY KEY,
+  college_id INTEGER NOT NULL,
+  student_user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  case_type TEXT NOT NULL,
+  title TEXT NOT NULL,
+  body TEXT,
+  status TEXT NOT NULL DEFAULT 'open',
+  staff_note TEXT,
+  opened_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
